@@ -10,12 +10,14 @@ chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
+require("dotenv").config({path: "../.env"});
+
 contract("Token Test", async (accounts)=> {
 
     const [deployerAccount, recipient, anotherAccount] = accounts;
     
     beforeEach(async() => {
-        this.UAHToken = await UAHToken.new(1000);
+        this.UAHToken = await UAHToken.new(process.env.INITIAL_TOKENS);
     })
 
     it("all tokens in my account", async () => {
@@ -24,7 +26,7 @@ contract("Token Test", async (accounts)=> {
         //let balance = await instance.balanceOf(accounts[0]);
         //assert.equal(balance.valueOf(), initialSupply.valueOf(), "balance not the same");
         expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
-    })
+    });
 
     it ("is possible to send tokens between another accounts", async () => {
 
@@ -35,7 +37,7 @@ contract("Token Test", async (accounts)=> {
         expect(instance.transfer(recipient, sendTokens)).to.eventually.be.fulfilled;
         expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply.sub(new BN(sendTokens)));
         expect(instance.balanceOf(recipient)).to.eventually.be.a.bignumber.equal(new BN(sendTokens));
-    })
+    });
 
     it ("is not possible to send more tokens than available", async () => {
 
@@ -44,6 +46,7 @@ contract("Token Test", async (accounts)=> {
         let balanceOfDeployer = await instance.balanceOf(deployerAccount); 
         expect(instance.transfer(recipient, new BN(balanceOfDeployer+1))).to.eventually.be.rejected;
         expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(balanceOfDeployer);
-    })
+    });
 
 });
+
