@@ -14,8 +14,12 @@ contract("Token Test", async (accounts)=> {
 
     const [deployerAccount, recipient, anotherAccount] = accounts;
     
+    beforeEach(async() => {
+        this.UAHToken = await UAHToken.new(1000);
+    })
+
     it("all tokens in my account", async () => {
-        let instance = await UAHToken.deployed();
+        let instance = this.UAHToken;
         let totalSupply = await instance.totalSupply();
         //let balance = await instance.balanceOf(accounts[0]);
         //assert.equal(balance.valueOf(), initialSupply.valueOf(), "balance not the same");
@@ -25,7 +29,7 @@ contract("Token Test", async (accounts)=> {
     it ("is possible to send tokens between another accounts", async () => {
 
         const sendTokens = 1;
-        let instance = await UAHToken.deployed();
+        let instance =  this.UAHToken;
         let totalSupply = await instance.totalSupply();
         expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(totalSupply);
         expect(instance.transfer(recipient, sendTokens)).to.eventually.be.fulfilled;
@@ -36,7 +40,7 @@ contract("Token Test", async (accounts)=> {
     it ("is not possible to send more tokens than available", async () => {
 
         
-        let instance = await UAHToken.deployed();
+        let instance =  this.UAHToken;
         let balanceOfDeployer = await instance.balanceOf(deployerAccount); 
         expect(instance.transfer(recipient, new BN(balanceOfDeployer+1))).to.eventually.be.rejected;
         expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(balanceOfDeployer);
