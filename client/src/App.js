@@ -7,7 +7,7 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false };
+  state = { loaded: false, KYCAddress: "0x123..." };
 
   componentDidMount = async () => {
     try {
@@ -47,23 +47,31 @@ class App extends Component {
     }
   };
 
+  handleInputChange = (event) => {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleKYCWhitelisting = async () => {
+    await this.KYCInstance.setKYCCompleted(this.state.KYCAddress).send({from: this.accounts[0]});
+    alert("KYC for" + this.state.KYCAddress+ " is completed!");
+  }
+
   render() {
     if (!this.state.loaded) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 42</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <h1>UAH Token Sale</h1>
+        <p>Вы можете купить UAH tokens здесь!</p>
+        <h2>KYC авторизация</h2>
+       Аккаунты которые разрешены: <input type="text" name="KYCAddress" value={this.state.KYCAddress} onChange={this.handleInputChange} />
+        <button type="button" onClick={this.handleKYCWhitelisting}>Добавить аккаунт в вайтлист</button>
       </div>
     );
   }
