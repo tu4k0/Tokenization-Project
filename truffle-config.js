@@ -18,6 +18,12 @@ module.exports = {
         return new HDWalletProvider(process.env.MNEMONIC, "HTTP://127.0.0.1:8545", AccountIndex);
       },
       network_id: 1337
+    },
+    ropsten_infura: {
+      provider: function() {
+        return new HDWalletProvider(process.env.MNEMONIC, "https://ropsten.infura.io/v3/070af8eb871343759c16fe9eb89dc115", AccountIndex);
+      },
+      network_id: 3
     }
   },
   compilers: {
@@ -26,4 +32,3 @@ module.exports = {
     }
   }
 };
-
