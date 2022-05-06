@@ -7,7 +7,7 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, KYCAddress: "0x123...", UAHTokenAddress: null, UAHTokenSaleAddress: null };
+  state = { loaded: false, KYCAddress: "0x123...", UAHTokenAddress: null, UAHTokenSaleAddress: null, userTokens: 0 };
 
   componentDidMount = async () => {
     try {
@@ -37,7 +37,8 @@ class App extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({loaded:true, UAHTokenAddress: UAHToken.networks[this.networkId].address, UAHTokenSaleAddress: UAHTokenSale.networks[this.networkId].address});
+      this.listenTotokenTransfer();
+      this.setState({loaded:true, UAHTokenAddress: UAHToken.networks[this.networkId].address, UAHTokenSaleAddress: UAHTokenSale.networks[this.networkId].address}, this.updateUserTokens);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -46,6 +47,19 @@ class App extends Component {
       console.error(error);
     }
   };
+
+  updateUserTokens = async () => {
+    let userTokens = await this.UAHTokenInstance.methods.balanceOf(this.accounts[0]).call();
+    this.setState({userTokens: userTokens});
+  }
+
+  listenTotokenTransfer = () => {
+    this.UAHTokenInstance.events.Transfer({to: this.accounts[0]}).on("data", this.updateUserTokens);
+  }
+
+  handleBuyTokens = async () => {
+    await this.UAHTokenSaleInstance.methods.buyTokens(this.accounts[0]).send({from: this.accounts[0], value: this.web3.utils.toWei("1", "wei")});
+  }
 
   handleInputChange = (event) => {
     const target = event.target;
@@ -70,7 +84,7 @@ class App extends Component {
         <h1>UAH Token Sale</h1>
         <h2>Осталось токенов UAH: 1000</h2>
         <p>Создатель UAH токенов: tu4k0</p>
-        <p>Контракт UAH токенов (ERC-20): {this.state.UAHTokenAddress}</p>
+        <p>Контракт UAH токенов (ERC-20/Ganache): {this.state.UAHTokenAddress}</p>
         <p>Вы можете купить UAH токены здесь!</p>
         <h2>KYC авторизация</h2>
        Введите аккаунт, который хотите внести в вайтлист: <input type="text" name="KYCAddress" value={this.state.KYCAddress} onChange={this.handleInputChange} />
@@ -80,6 +94,8 @@ class App extends Component {
         <div className="App">
         <h2>Купить токены UAH</h2>
         <p>Если вы хотите купить токены UAH, отправьте ETH на следующий адрес: {this.state.UAHTokenSaleAddress}</p>
+        <p>Вы приобрели: {this.state.userTokens} UAH токенов!</p>
+        <button type="button" onClick={this.handleBuyTokens}>Купить 1 UAH токен</button>
         </div>
       </div>
     );
