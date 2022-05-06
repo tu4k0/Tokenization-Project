@@ -14,7 +14,7 @@ contract("TokenSale Test", async (accounts)=> {
     it ("should not be any tokens in deployer Account", async () => {
         let instance = await UAHToken.deployed();
         return expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(new BN(0));
-    });
+    })
 
     it ("all tokens should be in a TokenSale smart contract", async () => {
         let instance = await UAHToken.deployed();
