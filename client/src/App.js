@@ -7,7 +7,7 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, KYCAddress: "0x123..." };
+  state = { loaded: false, KYCAddress: "0x123...", UAHTokenAddress: null, UAHTokenSaleAddress: null };
 
   componentDidMount = async () => {
     try {
@@ -37,7 +37,7 @@ class App extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({loaded:true});
+      this.setState({loaded:true, UAHTokenAddress: UAHToken.networks[this.networkId].address, UAHTokenSaleAddress: UAHTokenSale.networks[this.networkId].address});
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -68,12 +68,18 @@ class App extends Component {
     return (
       <div className="App">
         <h1>UAH Token Sale</h1>
+        <h2>Осталось токенов UAH: 1000</h2>
         <p>Создатель UAH токенов: tu4k0</p>
-        <p>Вы можете купить UAH tokens здесь!</p>
+        <p>Контракт UAH токенов (ERC-20): {this.state.UAHTokenAddress}</p>
+        <p>Вы можете купить UAH токены здесь!</p>
         <h2>KYC авторизация</h2>
        Введите аккаунт, который хотите внести в вайтлист: <input type="text" name="KYCAddress" value={this.state.KYCAddress} onChange={this.handleInputChange} />
        <div className="App">
         <button type="button" onClick={this.handleKYCWhitelisting}>Добавить аккаунт в вайтлист</button>
+        </div>
+        <div className="App">
+        <h2>Купить токены UAH</h2>
+        <p>Если вы хотите купить токены UAH, отправьте ETH на следующий адрес: {this.state.UAHTokenSaleAddress}</p>
         </div>
       </div>
     );
