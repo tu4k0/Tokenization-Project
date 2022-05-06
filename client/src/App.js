@@ -57,7 +57,7 @@ class App extends Component {
   }
 
   handleKYCWhitelisting = async () => {
-    await this.KYCInstance.setKYCCompleted(this.state.KYCAddress).send({from: this.accounts[0]});
+    await this.KYCInstance.methods.setKYCCompleted(this.state.KYCAddress).send({from: this.accounts[0]});
     alert("KYC for" + this.state.KYCAddress+ " is completed!");
   }
 
@@ -68,10 +68,13 @@ class App extends Component {
     return (
       <div className="App">
         <h1>UAH Token Sale</h1>
+        <p>Создатель UAH токенов: tu4k0</p>
         <p>Вы можете купить UAH tokens здесь!</p>
         <h2>KYC авторизация</h2>
-       Аккаунты которые разрешены: <input type="text" name="KYCAddress" value={this.state.KYCAddress} onChange={this.handleInputChange} />
+       Введите аккаунт, который хотите внести в вайтлист: <input type="text" name="KYCAddress" value={this.state.KYCAddress} onChange={this.handleInputChange} />
+       <div className="App">
         <button type="button" onClick={this.handleKYCWhitelisting}>Добавить аккаунт в вайтлист</button>
+        </div>
       </div>
     );
   }
